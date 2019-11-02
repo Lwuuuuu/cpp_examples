@@ -1,0 +1,66 @@
+Compiling = g++ -o <executable_file> <source_file>
+<< writes its second argument onto its first
+std:: specifies that the name cout is to be found in the standary-library namespace
+    Put line "using namespace std" to avoid putting putting std:: everytime you need to write std:: 
+
+Basic Types - boolean, char, int, double 
+Can use {} to initialize a variable
+    Note - {} will throw error if attempt to typecast to a data type that will make the variable lose information 
+        ie) int i2 {7.2}; 
+
+Techincally do not need to state a variables type when it can be deduced to what it was initialized too
+    auto b = true //boolean
+    auto ch = 'x' //char
+    auto i = 123 //int
+    auto j = 1.2 //double
+    ...
+Use auto when do not have a specific reasont o mention the type explicitly (Reasons to not use auto)
+    Definitions is in a large scope whjere we want to make the type clearly visible to readers of our code 
+    Want to be explicit about a variable's range of precision 
+
+Constants
+    const - Do not change the value of this variable. Used primarily to specify interfaces, so that data can be passed to functions without fear of it being modified
+    constexpr - To be evaluated at compile time. Used to specify constants, to allow placement of data in read-only memory 
+        constexpr function can be used for non-constant arguments, but when that is done the result is not a constant expression 
+            we allow constexpr to have this functionality so that we do not need to write the same constexpr function twice 
+            required by language rules (array bounds, case labels, template arguments and constants declared using constexpr)
+            compile time evaluation is important for performance 
+>> operator means get from and is used for input 
+cin is the standard input stream             
+
+Arrays, Pointers, Loops
+
+char v[6] //Init of 6 characters with the variable named v
+char* p //Pointer to character
+* means the contents of 
+& means the address of 
+& reference to. Similar to pointer, but you do not need the prefix * to access the value referred to by the reference (Passing argument to func)
+In declaration [] means array of and * means pointer to 
+A pointer variable can hold the adress of an object of an appropriate type:
+    char *p = &v[3]; //p points to v's fourth element
+    char x = *p; // *p is the object that p points to 
+
+when used in initialization, operators such as &, * and [] are called declartor operators 
+
+nullptr can be of any type, but make sure when you change the pointer to a different value that the type you casted it as correspond to what you intend to change it too 
+
+
+User-defined Types - We call the types that can be built from fu ndamentla types the const modifier and the declarator operators the built-in types
+C++ augments the built-in types and operations with a sophisticated set of abstraction mechanisms out of which programmers can build such high-level capabilities 
+
+. to access struct members, through a name and through a reference.
+-> to access struct through pointer 
+
+Classes 
+    Having the data specified separately from the operations on it has advantages, such as the ability to use the data in arbitrary ways.
+    Having a tighter connection between the representation and the operations is needed for a user-defined type to have all the properties expected of a real type.
+    Often want to keep the representation inaccessible to users, so as to ease use
+    Have to distinguish between the interface to a type and its implementation 
+    A function with the same name as its class is called a constructor, that is, a function used to construct objects of a class    
+        Defining the constructor will eliminate the problems of uninitialized variables for a class 
+
+Enumerations 
+    Enumeration (or enum) is a user defined data type in C. It is mainly used to assign names to integral constants, the names make a program easy to read and maintain.
+    C++11 has introduced enum classes (also called scoped enumerations),
+    that makes enumerations both strongly typed and strongly scoped. Class enum doesn’t allow implicit conversion to int, 
+    and also doesn’t compare enumerators from different enumerations.
