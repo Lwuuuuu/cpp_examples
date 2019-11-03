@@ -64,3 +64,20 @@ Enumerations
     C++11 has introduced enum classes (also called scoped enumerations),
     that makes enumerations both strongly typed and strongly scoped. Class enum doesn’t allow implicit conversion to int, 
     and also doesn’t compare enumerators from different enumerations.
+
+
+C++ represents interfaces by declarations. A declaration specifies all that's needed to use a function or a type     
+
+Seperate Compilation: 
+    Separation can be used to minimize compilation times and to strictly enforce separation of logically distinct parts of a program 
+
+Namespaces -Mechanism for expressing that some declarations belong together and that their names shouldn't clash with other names
+Used primarily used to organize larger program components such as libraries. They simplify the compostion of a program out of seprately developed parts 
+
+Exceptions
+    Static Assertions 
+        Preferabbly find errors at compile time instead of run-time
+        We can run simple ch ecks on properties that are known at compile time and report failures as compiler error messages
+            static_assert(4<=sizeof(int), "Integer are too small);
+        Static Assertions can be used for naything that can be expressed in terms of constant expressions 
+        static_assert(A,S) prints S as a compiler error message if A is not true 

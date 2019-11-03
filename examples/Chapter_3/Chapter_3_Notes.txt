@@ -1,0 +1,43 @@
+Chapter aims to give an idea of C++ support for abstraction and resource management without going into a lot of detail 
+Ways of defining and using new types
+Presents basic properties, implementation techniques and language facilities used for concrete classes, abstract classes, and class hierarchies 
+Templates are introduced as a mechanism for parameterizing ty pes and algorithms with other ty pes and algorithms 
+    Computations on user-defined and built-in types are represented as functions, sometimes generalized to template functions and function objects 
+
+
+Classes 
+    User-defined type provided to represent a concept in the code of a program 
+
+    Concrete Types:
+        Behave just like built-in types 
+            Example : Complex Number Type and Infinite-Precision Integer are much like built-in int's, but they have their own semantics and set of operations 
+            Vectors and strings are like arrays, but are more well-behaved 
+    
+Containers - Object holding a collection of elements, so we call Vector a container because it is the type of bojects that are containers 
+Mechanism to ensure that the memory allocated by the constructor is deallocated is called the destructor 
+Destructor is "~", followed by the name of the class and is the complement of the constructor 
+    Vector allocates memory on the heap using the new operator  and the destructor cleans it up by using the delete operator 
+The technique of acquiring resources in a constructor and releasing them in a destructor, k nown as Resource AAcquisition Is Initialization or RAII, allows us to eliminate 
+"naked new operations", that is to avoid allocations in general code and keep them buried inside the implementation of well-bheaved abstractions. 
+Similarly, "Naked delete operations", should be avoided. Avoiding naked new and naked delete makes code far less error-prone and far easier to keep free of resouce leaks 
+
+Initilizing Containers 
+    Containers exist to hold elements, so obviously we need convenient way of getting elements into a container 
+    We can handle that by creating a Vector with an appropriate number of elements and then assinging to them, but typically other ways are more elegent 
+    2 Favorites of initializing 
+        -Initializer-list constructore - Initalize with list of elements
+        Push_back() Add a new element at the end of sequence
+Complex and Vectors are called conrete types because their representation is part of their definition, in that they resemble built-in types
+Abstract type is a type that completely insulates a user from implementation details and to do that we decouple the interace from the representation and give up genuine local variables
+    We do not know anything about the representation of the abstract type so we must allocate objects on the heap and access through reference and pointers 
+
+Virtual functions
+    Consider the use function in Containers.cpp 
+    How does use know which [] operator to call? List_container or Vector_container? 
+        The container object must contain information to allow it to select the right function to call at run time 
+        The implementation works as follows:
+            Compiler converts the name of a vritual fu nciton into an index into a table of pointers to the number of functions (This case 2, List_container and Vector_container)
+            This table is called the virtual function table or simply the vtbl. 
+            The implementation of the caller needs only to know the location of the pointer to the vtbl in a Container and the index used for each virtual function 
+
+A vritual destructor is essential for an abstract class because an object of a derived class is usually manipulated throught he interface provided by its abstract base class. In particular, it may be deleted through a pointer to the base class            

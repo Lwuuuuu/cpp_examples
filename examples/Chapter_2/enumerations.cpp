@@ -1,4 +1,4 @@
-//C++ suports a simple form of user-defiend t ype for which we can enumerate the values
+//C++ suports a simple form of user-defiend type for which we can enumerate the values
 #include <iostream>
 using namespace std;
 enum class Color {red, blue, green};

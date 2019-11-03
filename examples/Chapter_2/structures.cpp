@@ -3,7 +3,7 @@ using namespace std;
 struct Vector {
     public:
         Vector(int s) :elem{new double[s]}, sz{s} {} //Construct a vector everything after the : will populate the attributes of this class 
-        double& operator[](int i) { return elem[i];} //Element access:subscripting operator[] overloads what [] does. it'll make it so that it will index into the elem and not vector itself
+        double& operator[](int i) {return elem[i];} //Element access:subscripting operator[] overloads what [] does. it'll make it so that it will index into the elem and not vector itself
         //int i refers to the input, that being if v[i], then it will refer to that i for the func it will execute 
         int size() const {return sz;} //a "const" suffix means "can be applied to const objects"
     private:
@@ -39,7 +39,8 @@ double read_and_sum(int s) {
 }
 
 int main(){
-    double sum = read_and_sum(10);
+
+    double sum = read_and_sum(3);
     cout << sum << "\n";
     // vector_init(v, 10);
     // cout << (&v)->elem[5] << "\n"; //when using -> the thing before the arrow must be a pointer demostrated by added the &.
