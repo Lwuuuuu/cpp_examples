@@ -41,3 +41,26 @@ Virtual functions
             The implementation of the caller needs only to know the location of the pointer to the vtbl in a Container and the index used for each virtual function 
 
 A vritual destructor is essential for an abstract class because an object of a derived class is usually manipulated throught he interface provided by its abstract base class. In particular, it may be deleted through a pointer to the base class            
+
+Copying Containers:
+    When a class is a resouce handle - class is respponsible for an object accessed t hrough a pointer.
+    The default copy would leave a copy of a vector referring to the same element as the original 
+
+
+Templates 
+    Vector is a general concept, independent of the notion of a floating-point number
+    A template is a class or a function that we parameterize with a set of types or values 
+    We use templates to represent concepts that are best understood as something very general from which we can generate specific types and functions by specifying arguments
+    such as element type double.
+    Templates are extensively used for parameterization of both types and algorithms in the standard library. For example,
+    we can write a function that calculates the sum of the elemtn values of any container like this....
+
+    Function Objects - Used to define objects that can be called like functions 
+        Widely used as arguments to aglorithms.
+            Used to specify the meaning of key operations of a general algorithm such as Less_than and count 
+            Expression - [&](int a){return a < x;} is called a lambda expression 
+                Generates a function object exactly like Les_than<int>{x}
+                    [&] is a capture list, specifying that local names used such as x will be accessed through reference
+
+    Variadic Tempalte - Can accept an arbitrary number of arguments of arbitrary types
+    Can accept any arguments you care to give them. Weakness is that the type checking of the interface is a possibly elaborate template program

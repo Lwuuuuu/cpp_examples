@@ -1,0 +1,24 @@
+Implementations 
+    C++ can be either hosted or freestanding
+        Hosted - Includes all the standard library facilities as described in the standard.
+        Freestanding - provide fewer standrad library facilities, as long as the folowing are provided...
+            Freestanding is only meant for code running with only the most minimal operating system su pport
+
+Types - 
+    Fundamentals - 
+        Boolean (bool)            
+        Character Types (char and wchar_t)
+        Integer types (int and long long)
+        Floating-Point (double and long double)
+        void 
+        From these types we can construct - 
+            pointer (int*)
+            array types (char[])
+            Reference Type (double& and vector<int>&&)
+        data structures and classes
+        Enumeration types for representing specific sets of values 
+
+    For Integer Literals using suffixes on your int's can avoid implementation dependicies with machines with different # of bits to represent ints 
+    unsigned bad, assume always positive, gain 1 bit tho 
+
+    Floats use suffix f or F. long double use l or L

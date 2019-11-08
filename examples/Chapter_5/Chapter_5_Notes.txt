@@ -1,0 +1,93 @@
+Standard Library components are designed not to leak resources. They rely on the basic language support for resource mangagement using constructors/deconstructors
+to ensure that a resource doesn't outlive an object responsible for it. 
+The use a constructor/destructor pair in Vector to manage the lifetime of its element is an example and all standard-library containers are implemented in similar ways
+
+A thread will not proceed until lck's constructor has acquired its mutex, m. The corresponding destructor releases the resource
+So, unique_lock's destructor releases the mutex whent he thread of control leaves f() through a return 
+
+In mememory, the standard library provides 2 smart pointers to help manage objects on the free store
+    shared_ptr - pointers are copied rather than moved. shared_ptrs for an object share ownership of an object and that object is destroyed whent he last of its shared_ptrs is destoryed 
+        in the example, f() or g() may spawn a task holding a copy of fp or in some other way store a copy that outlives user() 
+    unique_ptr - when we refer to a polymorphic object, we need a pointer because we don't know the exact type of the object referred to so unique_ptr becomes the obvious choice
+
+
+Concurrency - 
+    Execution of several task simultaneously - widely used to improve throughput or to improve responsiveness
+    The standard library directly supports concurrent execution of multiple threads in a single address space
+        threads, mutexes, lock(), packaged_tasks and futures 
+    We call a computation that can potentially be executed concurrently with other computations a task 
+    A thread is the system level representation of a task in a program. 
+    A task to be executed concurrently with other tasks is launched by constructing a std::thread with the task as its argument 
+    join() ensures that we don't exit the function calling the treads until the threads have completed.
+        join() means to wait for the thread to terminate 
+    Threads of a program share a single address space   
+        cout is an object and if 2 threads using 2 different processes where each process use the same object being cout, then trouble will happen 
+
+    Initalizing of {f, ref(some_vec)} uses a thread variadic template constructor that can accept an arbitrary sequence of arguments  
+        The ref() is a type function from <functional> that unfortunately is needed to tell the variadic template to treat some_vec as a reference, rather than as an object
+        Compiler checks that the first argument can be invoked given the following arguments and builds the necessary function object to pass to the thread. 
+
+Returning Results : 
+    Pass by non-const reference if expected that the task will modify the value of the data referred too. Sneaky, but not uncommon way of returning a result 
+    A less obscure way is to pass by const reference and to pass a location to deposit the result as a seperate argument.
+        Common technique but returning result through arguments isnt particularly elegent 
+
+
+Sharing Data - Sometime tasks have to be synchronized so that at most one task a time has access
+COmmuncating through shared data is pretty low level, so the programmer has to devise ways of knowing what work has and has not been done by various tasks 
+
+Waiting for Events 
+<conditional_variable> basic support for communcating external events. Allows thread to wait for some condition (often called an event) to occur as teh result of the work done 
+by other threads.
+
+Communicating tasks
+    future and promise for retruning a value from a task spawned on a seperate thread 
+    packaged_task to help launch taks and connect up the mechanisms for returning a result 
+    async() for launching of a task in a manny very similar to calling a function 
+
+
+Future and Promises 
+    Enable a transfer of a value between two tasks without explicit use of a lock; "the system" implements the transfer efficiently. 
+        When a task wants to pass a value to another, it puts the value into a promise. Somehow, that value will appear in the crrepsonding future, from which it can be read
+        If the value is not present in the future variable, then block till recieved 
+    Future must be ready to recieved an exception if something went wrong with computating the promise. 
+
+Package_task 
+    How do we get a future into the task that needs a result and the corresponding promise into the thread that should product that result?
+        Packaged_task simplifies setting up tasks connected with futures and promises to be run on threads 
+            Provides a wrapper code to ptut the return value/exception from the task into a promise 
+    Notice the absence of locking, can just concentrate on tasks being done 
+async() 
+    Treat a task as a function that may happen to run concurrently with other tasks. 
+    Never use asybc() for task that shared resources that need blocking 
+    Not just for parallel computation, can be used to spawn a task for getting information from the user, while the main program is active with something else 
+
+Small Utility components        
+    clock and duration for measuring time 
+    Type functions, such as iterator_traits and is_arithmetic, for gaining information about types
+    pair and tuples for representing small, potentially heterogeneous sets of values 
+
+Type Functions 
+    Function that is evaluated at compile-time given a type as its argument or returning a type
+    Numeric Types:
+        numeric_limits -> constexpr float min = numeric_limit<float>::min(); //Smallest positive float 
+
+    Iterator_traits 
+        for sort() the iterators that are fed as arugments must be random access iterators, some containers such as forward_list do not offer that
+
+        Standard library provides a mechanism, iterator_traits that allows us to check which kind of iterator is supported 
+        Value_type<For>> is the type of For's element, called its value type
+
+Type Predicates
+    Simple tpe function that answers a fundamental questions about Types    
+        bool b1 = Is_arithmetic<int>(); //Yes, int is an rithmetic type
+        bool b2 = Is_arithmetic<string>(); //No, string is not an arithmetic type 
+    found in <type_traits> <is_class> ... etc 
+    Most powerful when used in the context of templates.
+
+Pair and Tuples 
+    Often we just need some data, a collection of values, rather than an object of a class with well-defined semantics and an invariant for its values.
+    Could let th e standard library write the definition for us. 
+        For example, the standard-library algorithm equal_range returns a pair of iterators specifying a subsequence meeting a predicate
+        A tuple is a heterogeneous sequence of elements 
+    

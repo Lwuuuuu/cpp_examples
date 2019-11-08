@@ -82,10 +82,20 @@ void h() {
 
 }
 
+void  bad_copy(Vector_container& v1) { 
+    Vector_container v2 = v1;
+    v1[0] = 2;
+    v2[1] = 3;
+    cout << "These values are the same : " << "v1 " << v1[0] << " " << "v2 " << v2[0] << endl;
+    cout << "These values are the same : " << "v1 " << v1[1] << " " << "v2 " << v2[1] << endl;
+    //Need to define a better copy semantic      
+}
+
 int main() {
     Vector_container v(3);
     read(v);
-    use(v);
+    bad_copy(v);
+    //use(v);
     //h();
     return 0;
 }

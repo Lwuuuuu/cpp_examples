@@ -1,0 +1,64 @@
+Containers and Algorithms 
+
+Key Standard Library Facilities 
+
+I/O Stream Library defines output for every built-in type. 
+Easy to define output of a user-defined type. Operator << is used as an output operator on objects of type ostream (cout, cerr)
+
+iostream library allows programmers to define I/O for their own type 
+
+
+Computing involves creating collections of values and then manipulating such collections 
+A class with the main purpose of holding objects is commonly called a container 
+
+Vector - 
+    Initalized values of a vector are nullptr for pointers and 0 for numbers 
+    push_back(), adds a new element at the end of a vector, increasing its size by one
+    Like all standard-library containers, a vector is a container of elements of some type T, that is, a vector<T>
+    When you insert a new element, its value is copied into the co ntainer. So the element is not a reference or a pointer to some objects
+
+    Range Checking - Standard-library Vector does not guarantee range checking, when accessing out of range stuff it will return a random value 
+        create new class that uses vector as an interface, so Vec is a copy of Vector, then overload the [] operator and use at() to check for out of range
+
+List - Standard library offers a doubly-linked list called list.
+    Use a Vector over this since vector performs better for traversal and sorting and searching 
+    Difficult to iterate through list, need an iterator, cannot use [] to index unless you overload 
+
+
+Map 
+    Standard library offers a search tree (red-black tree) called map 
+    Map is known as an associative array or a dictonary. Implemented as a balanced binary tree 
+    Basically a dictonary, if a key is not found then the key is entered into the map with a default value 
+        Can use find() and insert() instead of [] if do not want accept invalid keys into the map. 
+
+
+push_back() vs back_inserter(): Now, you may be thinking that push_back() and back_inserter are similar, but they are not. 
+When you have to pass an iterator in the algorithm, then you should use back_inserter like in above case,
+ while for normally inserting the values at the end of the container, push_back() can be used.
+
+
+Iterators are used to seperate algorithms and containers. 
+Algorithm operates on its data through iterators and knows nothign about the container in which the elements are stored
+Containers know nothing about the algorithm and only supply iterators upon request 
+
+Iterator Types 
+    Any particular iterator is an object of some type
+    Many different iterator types 
+    Vector pointer oculd jsut be an ordinary pointer, because a pointer is quite a reasonable way of referring to an element 
+        Alternatively, a vector iterator could be implemented as a pointer to the vector plus an index.
+
+    A list iterator must be something more complicated than a simple pointer to an element because ane lement of a list in general does not know where the next element of that list is.
+    Thus, a list iterator might be a pointer to a link 
+
+    Users rarely need to know the type of a speicfic iterator, each container "knows
+    its iterator type and makes them avaliable under the conventional names iterator and const_iterator. 
+    For example, list<Entry>:iterator is the gerneral iterator type for list<Entry> we rarely have to worry about the details of how that type is defined 
+
+Iterators are useful for dealing with sequence of elements in containers. However, containers are not the only palce where we find sequences of elements
+    For example, an input stream produces a sequence of values, and we write a sequence of values to an output stream. 
+        Consequently the notion of iterators is useful when applied to I/O
+
+    To make an ostream_iterator, we need to specify which stream will be used and the type of objects written to it.
+    For example, 
+        ostream_iterator<string> oo {cout}; //Writes strings to cout
+        istream_iterator<string> li {cin}; //Allows us to treat an in put stream as  read-only container    
