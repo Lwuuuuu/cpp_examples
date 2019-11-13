@@ -1,0 +1,95 @@
+Key to effective use of C++ is the definition and use of  user-defined types.
+    Struct, sequence of elements of arbitrary types
+    A union is a struct that holds teh value of just one of its elements at any one time
+    An enum is a type with a set of named constants
+    enum class (scoped enumeration) is an enum where the enumerators are within the scope of the enumeration and no implicit conversions to other types are provided 
+
+    Structures 
+        Is an aggregate of elements of arbitrary types 
+        Structures passed by pointer use -> to access members
+        Structures passed by reference use . to access members
+        Members are allocated in memory in declaration order
+        Can minimize wasted space by simply ordering members by size (Largest members first)
+    
+        struct names 
+            Name of a type becomes avalible for use immeidately after it has been encountered anod not just after the complete declaration has been seen 
+            Example - 
+                struct Link {
+                    Link* previous;
+                    Link* successor; //Pointers to Link structs 
+                };
+            the name of a struct can be used before the type is defined as long as that use does not require the name of a member or the size of the structure to be known 
+        Possible to declare a struct and a non-struct with the same name in the same scope, not advised 
+
+Structures and Classes 
+    A struct is simply a class where the members are public by default. So, a struct can have member functions. In particular,m a struct can have constructors 
+    Constructors are needed if you need to reorder arguments, validate arguments, modify arguments, establish invariants, etc 
+        Add constructor to ensure that all member values are initalized 
+
+Structures and Arrays 
+    Main advantage of using std::array over built-in arrays are that it is a proper object type (has assignment, etc) and does not implicitly convert to a pointer to an indvidual element 
+
+Type Equvalence 
+    Two structs are different types even when they have the same members 
+    Also different from a type used as a member
+    Every struct has a unique definition in a program 
+
+Plain Old Data
+    Sometimes we want to treat an object as just "plain old data"
+    Do not want to worry about advanced semantic notions, such as run-time polymorphism, user-defined copy semantics, etc
+    The reason to not worry about such things is to be able to move objects around in the most efficient way the hardware is capable of.
+        For example, copying a 100-element array using 100 calls of a copy constructor is unliekly to be fast as calling std::memcpy(), which typically uses a block-move machine instruction 
+        default construtor is when you have the struct name followed by ()
+        POD must be 
+            Standard layout type
+            trivially copyable type 
+            a type with a trivial default construcotr
+
+Fields 
+    Smallest data size in C++ is a byte, which is 4 bits. But could just use 1 bit to represent an on/off switch 
+    Possible to bundle several such tiny variables together as fields in a struct 
+    Syntax is <type> <variable_name> : <size in bits> 
+
+Unions 
+    Is a struct in which all members are allocaed at the same address so that the union occupies only as much space as its largest member.  
+    Naturally, a union canhold a value for only one member at a time. 
+    Unions are sometimes misused for type conversions. 
+
+Unions and Classes 
+    Many nontrivial unions have a member that is much larger than the most frequently used members, meaning that space is wasted
+    The waste can often be eliminated by using a set of derived classes instead of a union.
+    Restrictions imposed on unions 
+        Cannot have virtual functions
+        Unions cannot have members of reference type 
+        Union cannot have base classes
+        At most one member of a union can have an in-class initializer 
+        Union cannot be used as a base class 
+        If a union has a member with a user-defiend constructor, copy, ..., then those special operations are deleted 
+    Generally, union is an optimization do not want hidden overheads
+
+    For union, it is illegal to write one member then read from another 
+    Possible to specify an in-class initializer for at most one member.
+
+Anonymous Unions 
+    Used for when you considering to write a class that overcomes the problems with misuse of a union, consider a variant of Entry 
+
+Enumerations 
+    An enumeration is a type that can hold a set of integer values specified by the user 
+    Some of an enumeration's possible values are named and called enumerators 
+    Example - 
+        enum class Color {red, green, blue};
+    2 Types of enumerations 
+        Enum classes, for which the enumerator names, are local to the enum and their values do not implicitly convert to other types (Can have variables called red, green, blue within function and not collide with enumerators)
+            Must be explicit when converting enumerator to integer 
+        Plain enums for which the enumerator names are in the same scope as the enum and their values implicitly convert to integers (Cannot have variables collide with enumerator values, but can have enumerator values be represented with integers)
+    In general, Enum classes are preferred because they cause fewer surprises 
+
+    enum classes 
+        Scoped, and strongly typed enumeration 
+        Note that enumerators present in both enums do not clash because each is in the scope of its own enum class, thus why it is local to their respective enum 
+        We call the type used to represent an enumeration its underlying type. 
+            Must be one of the signed or unsigned integer types; default is int. We can be explicit of its underlying type when initilizing 
+        The values that enumerators are intialized too are chosen so they can be combined/optimized for bitwise operations 
+
+    plain enums:
+        Cannot declare the enum without defining it if you dont specify the underlying type 

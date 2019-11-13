@@ -1,0 +1,104 @@
+It is not safe to use a pointer that has been converted to a type that differs fromt he type of the object pointed too.
+Primary use of void* is for passing pointers to functions that are not allowed to make assumptions about the type of the object and for returning untyped objects from functions.
+Functions using ov id* pointers typically exist at the very lowest level of the sustem, where real hardware resources are manipulated.
+    void* my_alloc(size_t n);
+
+
+Arrays 
+    Avoid arrays in interfaces (as funcion arguments) because their implicit conversion to pointer is the roout cause of many common errors 
+        Happens because array implicitly converts to a pointer to its first element at the slighest provocation 
+        char* and const char* is assumed to point to a zero-termianted sequence of characters 
+        Initialzing an array - 
+            Initialzing with too many is bad, error
+            Initializing with too few will leave the remaining spots filled with 0 
+    No built-in copy operations, cannot Initialze one array with another and no array assignment
+        int v6[8] = v5; //No
+        v6 = v5; //no array assignment
+    Cannot pass by value
+    When you need assignment to a collection of objects, use a vector, an array or a valarray
+
+String Literal
+    Statically allocated so that it is safe to reutrn one from a function 
+    When comparing with == it compares the addresses when applied to pointers and not the values 
+
+    Raw Strings - Used when using regex, since \ is used as an escape character. In a raw string literal a backlash is just a backlash and a double quote is just a double quote 
+        Use the R"(ccc)" notation 
+    
+    A string with the prefix L is a string of wide characters - L"angst" - It is a type const wchar_t[]
+    LR"(angst) is a raw string of wide characters of tyep const wchar_t[]
+
+    UTF-8 termianted by '\0'
+    UTF-16 terminated by 'u\0'
+    UTF-32 terminated by 'U\0'
+    Real purpose of u nivode strings is to be able to put the unicode characers in tot hem
+
+Pointers into Arrays 
+    Taking a pointer to the element one beyond the end of an array is guaranteed to work. Important for many algorithms dont go below or beyond that though
+    a[j] == *(&a[0] + j) == *(a+j) == *(j + a) == j[a]
+    range-for does not work for pointers, but works for chars with known size
+
+
+Multidimensional Arrays 
+    Can init a 2d Array like
+        int ma[3][5];
+        Simply 15 ints that we access as if it were 3 array of 5 ints
+
+constexpr means evaluate at compile time
+use *const instead of plain * to declare a pointer itself to be a const 
+
+const char* strchr(const char* p, char c);
+char* strchr(char * p, char c);
+First version is used for strings where the element musn't be modified and returns a pointer const that does not allow modification 
+char* strchr(char*p, char c);
+Second version the strings are mutable
+
+
+References 
+    lvalue reference : to refer to ob  jects whose value we want to change
+    const reference : to refer to objects whos value we do not want to change 
+    rvalue reference : to refer to objects whose values we do not need to preserve after we have used it 
+
+    Lvalue reference 
+        X& means "reference to X"
+        a reference must be initialized to something 
+        when using ++ on a reference, it will actually increment the vlaue that is being referenced not the pointer mem addr 
+        Therefore, a reference cannot be changed after initilization; it always refers to the object it was initialized to denote 
+        Cannot define an array of references, in that sense a reference is not an object.
+        Reference is a constant pointer that is deferenced each time it is used 
+
+        The initilizer for a const T& need not be an lvalue or even of type T in such cases:
+            1. First, implicit type conversion ot T is applied if necessary
+            2. Then, the resulting value is replaced in a temporary variable of type Taking
+            3. Finally, this temporary variable is used as the vlaue of the in initalizer 
+
+            example - 
+                double &dr = 1;
+                const double& cdr {1};
+
+                would've been applied using - 
+                    double temp = double {1};
+                    const doublee& cdr {temp};
+        Generally bad to avoid functions that modify their arguments. Instead return a value from the function explicitly 
+    
+    Rvalue References   
+        Basic idea of having more than one kind of reference is to support different uses of objects:
+            A non-const lvalue reference refers to an object, to which the user of th e reference can write 
+            A const lvalue reference refers toa  c onstant, which is immutable from the point of view of the user of the reference 
+            An rvalue reference refers to a temporary object, which the user of the reference can modify, assuming that the object will never be used again 
+                Want to know if a reference refers to a temporary rvalue, so that we can sometimes turn an expensive copy operation into a cheap move operation 
+        
+        The && declarator operator means "rvalue reference", 
+        Most of the beenfit from using rvalue references involve writing to the object to which it refers, so we do not use const rvalue references
+        Both a const lvalue reference and rvalue reference can bind to a rvalue 
+        All stl containers provide move construcotrs, and move assignments. 
+            Also, their oeprations that insert new elements such as insert() and push_back() have versins that take rvalue references 
+
+References to References 
+    If you take a reference to a reference to a type, you get a reference to that type. But lvalue or rvalue reference?
+        3/4 time it is a lvalue. 
+
+Pointers and References     
+    If you want to be sure that a name always refers tot he same object, use a reference
+    If you want to use a user-defined operator on something that refers to an object, use a reference 
+    If you want a collection of something that refers to an object, you must use a pointer 
+    If you need a "no value" notion, then have to use pointer which has nullptr, reference has nothing 
