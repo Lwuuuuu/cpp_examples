@@ -1,0 +1,168 @@
+Interface inhertiance is often referred to as run-time polymorphism or  dynamic polymorphism  
+Discussion of class hierarchies is organized into three chapters 
+    1. Derived Classes - Introduces basic language features supporting OOP. 
+    2. Class  Hierarchies - Focuses on the use of base and derived classes to effectively organize code around the notion of class hierarchies 
+    3. Run-time Type Identifcation - Describes the techniques for explictily navigating class hierarchies. 
+        In particular, the type conversion operation dynamic_cat and static_cast are present, as is the operation for determing the type of an object given one of its base class 
+
+Derived Classes 
+    A manager is an employee; the employee data is stored in the emp member of a Manager object 
+        Nothing telling the compiler and other tools that Manager is also an employee even though obvious to human 
+        One  cannot ut a Manager onto a list of Employees without writing special code 
+            Could use explicit type conversion on a Manager* or put address of the emp m ember onto list of employees 
+                Obscure, correct approach is to explicitly state that a Manager is an employee 
+                    This can be done by adding a few pieces of information - 
+                        struct  Manager : public Employee { 
+                            list<Employee*> group;
+                            short level; 
+                        }
+                    Instead of 
+                        struct Manager { 
+                            Employee emp; 
+                            list<Employee*> group 
+                            short level; 
+                        }
+            Can now create a list of Employees where some of are Managers 
+            Since a Manager is also an Employee, an Manager* can be used as an Employee* 
+            Simiarly, Manager& can be used as a Employee&
+                Though, a Employee cannot be used as a Manager
+    No memory overhead is implied by deriving a class. Space required is just the space required by the members     
+    An object of a derived class can be treated as an object of its base class when manipulated through pointers a nd references 
+        Opoosite is not True. Need static_cast and dynamic_cast
+
+Member Functions 
+    A member of a derived c lass can use the public and protected members of a base class as if they were declared in the derived class itself 
+    Cannot access private members of a base class 
+    Cleanest solution is for the derived class to use only the public memebrs of its b ase class 
+
+Constructors and Destructors 
+    Destrucotrs in a hierarchy need to be virtual 
+
+Class Hierarchies 
+    When a derived  class can itself be a base class for another class that is  known  as class hierarchy 
+
+Type Fields 
+    Given a  point of type  Basee*, to which derived type does the object pointed to really belong 
+    Four fundamental solutions 
+        1. Ensure that only objects of a single type are pointed to 
+        2. Place a type field in the base class for the function to inspect 
+        3. Use dynamic cast 
+        4. use virtual functions 
+    Type field solution is typicallyt best avoided 
+        Fundamental weakness is that it dependds on the programmer manipulating types in a way that can not be checked by the compiler 
+        Finding all such tests on the type field buried in a large function that handles many  derived classes can be difficult 
+        Any addition of a new Empkloyee involves chaninging to all key functions in a system 
+            It is an error-prone technique 
+
+Virtual Functions 
+    Overcomes the problems with the type-field solution by allowing the programmer to declare functions in a b  ase class that can be redefined in each derived class
+    keyword virtual indicates that print() can act as an interface to the print() function defined in this class and print() functions defeined in classes dervied from it 
+        Where such print() functions are defined in derived classes, the c ompiler ensures that the right print() for the given Employee object is in voked in each case  
+        A virtual function is sometimes called a method 
+        A virutal function must be defined for the class in which it is first declared 
+    The function in a dervied class cannot differ from the argument types declared in the base and only very slight changes are allowed for th e return type
+    When deriving a class, simply provide an approperiate function if it is needed 
+    Getting "the right" behavior from Employee's functions indepdently of exactly what k ind of Employee is actually used is c alled polymorphism 
+    A type with virtual function is called a polymoprhic type or a  run-time polymorphic type 
+        To get runtime polymorphic behavior the member functions called must be virtual and objects must be manipulated via pointer/reference 
+    By default, a function that overrides a virtual function itself becomes virtual. 
+    We can but do not need to repeat virtual in a derived class 
+    
+    The usual implementation technique is for the compiler to convert the name of a virtual function into a n index into a table of pointers to functions 
+        Table is called the virtual function table. 
+    Each class with virtual functions has its own virtual table identifying its virtual functions 
+    The function in the vtbl allows the object to be used correctly even when the size of the ob ject a nd the layout of its data are unknown to the caller 
+        Space overhead is one pointer in each ob  ject of a class with virtual function plus one vtbl for each such class 
+
+Explicit Qualification 
+    Calling a function using the scoep resolution operator, ::, as is done with Manager::print() ensures that the virtual mechanism is not used. 
+        If it had just been print(), then it would of suffered from infinte recursion because a call to print() would make a call to Manager::print() instead 
+    Virtual function is also inline  
+
+Override Control 
+    If you declare a function in a dervied c lass that has exactly the same naem adn type as a virtual function in a base class, then the function in the derived class orverrides the one in the base class.
+        In larger c lass hierarchies it can be difficult to be sure that you actually override the function you meant to override. 
+    Specific Controls are useful 
+        1. virtual: The fu nction may be overriden 
+        2. =0 The function must be virtual and must be overriden 
+        3. override The function is meant ot override a virtual function in a base class 
+        4. The function is not mean to be overriden 
+    a  non-static member fu nction is virtual if and only if it overrides a virtual function in a base class 
+
+Override 
+    Last part of the declaration after everything else 
+
+final 
+    We use virtual for functions we want writers of derived classes to be able to define or redefine
+    adding final to a class prevent overriding and also prevents further derivation from a class 
+    Only use final to refelct a semantic need  
+    A final specifer is not part of the type of af ucntion and  cannot be repeated in an out-of-class defintion 
+
+using Base Members 
+    Functions do not overload across scopes 
+    using-declaration can be used t o add a function to a scope 
+    Example - 
+    struct D2 : Base {  
+        using  Base::f; //Brings all of f's from Base into D2
+        void f(double);
+    }
+    Several using-declarations can bring in names from multiple base classes 
+
+Inheriting Constructors 
+    Suppose you want a vector that's just like std::vector, but with guaranteed range checking 
+    Inherit the std::vector class and make changes to the [] with check helper function 
+        Problem with this is t hat Vector failed to inherit a ny constructors from std::vector 
+    Problem solved by putting "using vector<T>::vector> into the class definition to inherit all of vector function/constructors explicitly
+
+Return Type relaxation 
+    There is a relaxation o f the rule th at tye type of  an overriding function must be the same a s the type of the virtual function it overrides 
+        If the  original return type was B* , then the return type of the overriding function may be D*, provided that B is the base of D 
+    This relaxation only applies that are pointers or references and not smart pointers
+
+Abstract Classes 
+    An example of an abstract class would be a Shape with only the member functions rotate and draw 
+    Better alternative is to d eclare the virtual fu nctions of class Shape to be pure virtual functions 
+        Made pure by the psuedo intializer =0 
+    A class with one or more pure virtual function is abstract class and no objects of that abstract class can be created 
+    An abstract class is intended as an interface t o objects accessed through pointers and reference 
+    Usually, important for an abstract class to have a virtual destructor. 
+        Consequently, it is usually important f or an abstract class to have a virtual destructor 
+            This is because the interface provided by an abstract class cannot be used to create objects using a consturctor, abstract classes dont usually have constructors
+    For example, using Shape as a  base class for Polygon we cannot use draw() and rotate() because we did not override them yet. 
+        Once they are overrided and defined we then can start creating objects for it 
+        AN abstract class porivdes an interface without exposing implementation details.
+
+Access Control 
+    A member of a class can be private, protected or public 
+        1. Private, its name can only be used only by member functions and friends of the class in which it is declared 
+        2. protected, its naem can  be used o nly by member functions and friends of the class in which it is declared by member functions and friends of classes derived from this class 
+        3. public, can be used by any function 
+
+protected members 
+    When designing a class hierarchy, we sometimes provide fu nctions designed to be used by implementers of dervied classes but not by general users 
+    We may provide an efficient unchecked access function for dervied class implementers and safe checked a ccess for ot hers 
+        Declaring the unchecked version protected achieves this 
+    Private/public model allow the programmer to distinguish clearly between the implementers and the general public 
+    Members  declared protected are far more open to a buse than memebers  deeclared privaate 
+    In particular, declaring data members protected is usually a design error 
+        Placing significant amounts of data in a common class for all derived c lasses to use leaves that data open to corruption 
+    Generally, you don't have to use protected data; private is the default and is usually the better choice 
+
+Access to Base Classes 
+    Different access specifiers serve different design needs for when intializing a class 
+        1. public derivation makes the derived class a substype of its base. 
+        2. private bases are most useful when defining a class by restricting the interface to a base so that  stronger guarantees can be provided 
+        3. protected bases are useful in class hierarchies in which further derivations is the norm 
+    base default to a private base for a class 
+    base defaults to a public base for a struct        
+
+Pointers to Members 
+    A pointer to member is an off-set like construct that allows programmers to indreictly refer to a member of a  class 
+    ->* we can access a member th at has its name stored in a pointer to member 
+
+
+
+
+
+
+

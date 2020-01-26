@@ -1,0 +1,107 @@
+
+Seperate Compilation 
+    A user presents a source file tot he compiler. The file is then preprocessed; that is, macro processing is done 
+        A file is the traditional un it of storage and traditional unit of compilation 
+        The result of preprocessing is called a translation unit. 
+            The unit is whawt the compiler proper works on and what the C++ langauge rule describes 
+    To enable separate compilation, the programmer must supply declarations providing the type information needed to analyze a translation unit. 
+    Linker can detect many kinds of inconsistencies. 
+        Linker is the program that binds together the separately compiled parts.
+        A link is sometimes called a loader. 
+        Linking can be done completely before a program starts to run. 
+
+Linkage 
+    One file can use the variables defined in another file. 
+        keyword extern indicates that the declaration of a variable is a declaration and not a definition 
+
+    Type of errors not detected by linker 
+        1. Variable being defined twice 
+        2. Variable is declared twice with different types 
+        3. Variable declared twice but not defined 
+        Cannot be caught by a compiler that looks at only one file at a time, though detectable by a linker 
+        A name that can bused in translation units different from the one in which it was defiend is said to have external linkage 
+        A name that can be referred to only in the translation unit in which it is defined is said to hav einternal linkage 
+            static, const, etc.. 
+            When used in namespace scope, the keyword satatic means "not accessible from other source files" 
+            The keyword const implies default internal linkage, so if you want external linkage, use the keyword extern 
+    An inline function must be defined identically in every translation unit in which it is used. 
+        Combination of external linkage and inlining is banned to make life simpler for compiler writers 
+    To keep inline functions consistent you use a header file, in which you will include to your source files 
+    To ensure consistency, place aliases, consts, constexprs, and inlines in header files 
+
+File-Local Names 
+    Global Variables are in general best avoided because they cause maintenance problems. 
+        Hard to know where in a program where they are used and they can be a source of data race in multi-threaded programs 
+            If you use a global variable atleast restrict the usage to a single source file 
+                Can be achieved in two ways 
+                    1. Place declarations in an unnamed namespace 
+                    2. Declare an entity static 
+    An unnamed namesapce can be used to make names local to a compilation unit. 
+        The effect of an unnamed namespace is very similar to that of internal linkage. 
+ 
+ Header File 
+    The types in all declarations of the same object, function, class, etc, must be consistent 
+        The source code submitted to the compiler and later linked together must be consistent.
+            One way to achieve consistency fro declarations in different translation units is to include header files containing interface information in source files constaining executable code and/or data definitions 
+    the #include mechanism is a text manipulation facility for gathering source program fragments together into a single unit for compilation 
+
+    A Header file should never contain 
+        1. Ordinary function definitions 
+        2. Data definitions
+        3. Aggregate definitions
+        4. Unnamed Namespaces
+        5. using-directives
+    Including these in a header will lead to errors or to confusion 
+
+The One-Definition Rule - Two defintions of a class, tempalte, or inline function are accepted as examples of the same unique definition if and only if 
+    1. They appear in different translation units 
+    2. They are token-for-token identical 
+    3. The meaning of those tokens are the same in both translation units 
+    Local type aliases and macros can change the meaning of #included declarations: 
+        Best defense to this is to make the header as self-contained as possible. 
+            An example, is that if an external class not defined in the header file is declared in the header file, an error could have been detected 
+
+Linkage to Non-C++ Code 
+    Common for C++ code fragments to be used as parts of programs written mainly in some other languages (Python, Matlab)
+
+    extern "C" char* strcpy(char*, const char*);
+        The extern "C" directive named a linkage convention and not a language 
+            A function declared extern "C" still boeys the C++ type-checking and argument conversion rules and not the weaker C rules. 
+    Can do 
+    extern "C" { 
+        //All functions C language linkage, (Will be used in C code as a header)
+    }
+    This construct can be used to enclose a complete C header to make a header suitable for C++ use
+
+Mulitple-Header Organization 
+    Each .cpp file has a corresponding .h file specifying what it provides. 
+        Each .cpp file includes its own .h file along with other .h files that specify what if needs from other modules in order to implement thr services advertised in the interface 
+    The interface for users is put into its .h file, the interface for implementers is put into a file suxffixed _file.h and module defintions, functions variables are placed in the .cpp file 
+        A shared enviornment where a .h file uses other .h files is used as file_impl.h 
+            Not uncommon to have more than one _impl.h, since different subsets of the module's functions need different shared contexts 
+    Since we assume that every header may be include in several .cpp files, we seperate the declaration fromt eh definition for a variable
+
+Include Guards 
+    Idea of the multiple-header apporach is to represent each logical module as a consistent, self-contained unit. 
+        Many of the declarations needed to make each logical module complete are redundant
+            Can cause errors, as a header containing class definitions or inline functions get included twice in the same compilation unit 
+                Two Choices - 
+                    1. Reorganize our program to remove the reduundancy 
+                    2. Find a way to allow repeated inclusion of headers 
+                include guards - Contents of the file between #ifndef and #endif are ignored by compiler if CALC_ERROR_H is defined 
+                    This means that CALC_ERROR_H is defined only once 
+
+Programs - Collection of separately compiled units combined by a linker 
+
+Initilization of Nonlocal Variables 
+    A function returning a reference is a good alternative to a global variable. 
+        Within the body function a variable is defined with static making it global? 
+    
+Program Termination - 
+    1. Returning from main()
+    2. calling exit() - Destructors for consturcted static objects are called, does not abort program immediately 
+    3. calling abort() 
+    4. Throwing uncaught exception 
+    5. Violating noexcept()
+    6. quick_exit()
+

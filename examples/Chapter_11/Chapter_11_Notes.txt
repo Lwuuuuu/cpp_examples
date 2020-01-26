@@ -1,0 +1,87 @@
+Etc Operators 
+    Logical Operators 
+        &&, || and !
+            && and || evaluate the second argument only if neccesary 
+    Bitwise 
+        &, | and ^ (Logical XOR)
+        ~ (Complment), << (Left Shift), >> (Right Shift )
+
+Conditional Expressions 
+    Can be used in constant expressions 
+    a pair of expressions e1 and e2 can be used as laternatives in a conditional expression if they are of same type or if there is a common type T, to which they can both beimplicitly converted 
+
+Memory Management 
+    Problems w/ Heap:
+        Leaked Objects
+        Premature Deletion
+        Double Deletion 
+    Don't put objects on the free store if you don't have too 
+    When you construct an object on the free store, place its pointer into a manager object with a destructor that will destory it. 
+        Examples are string, vector, etc...
+    When using string new and delet are used implicity (hidden from user)
+
+
+Unqualified Lists 
+    Used where an expected type is unambioguosly known 
+        Can only be used as an expression in -
+            Function Arguments
+            Return Values
+            RH operand of an assignment Operators
+            A subscript 
+
+Initializer_list is simplest way of deaing with homogeneous lists of varying lengths. However, beware that zero elements can be a special case. Type of a Initializer_list 
+can be dedeuced only if all elements are of same type.
+    We cannot deduce the type of an unqualified list for a plain template argument 
+
+
+Lambda Expressions 
+    Lambda expression sometimes also referred to as a lambda function, is a simplified notation for defining and using an anonymous function object. 
+        Instead of defining a named class with an operator(), later making an object of that class and finally invoking it we can use a shorthand.
+        Useful when we want to pass an operation as an argument to an algorithm. 
+
+        A lambda expression consists of a sequence of parts 
+            A possible empty capture list, specifying what names from the definition environment can be used in the lambda expression's body, and whether those are copied or accessed by reference
+                Delimited by []
+            An optional parameter list, specifying what arguments the lambda expression requires. The parameter list is delimited by () 
+            An optional mutable specifier, indicating that the lambda expression's body may modify the state of the lambda (Change the lambda's copies of variable caputed by value)
+            An optional noexcept specifier
+            An optional return type declaration of the form -> type
+            A body, specifying the code to be executed. The body is delimited by {}. 
+
+Alternative to lambdas 
+    Many lambdas are small and only used once. For such uses, the relatistic equivalent involves a local class defined immediately before its (only) use 
+
+Capture 
+    Main use of lambdas is for specifying code ot be passed as arguments. 
+    Lambadas allow that to be done "inline" without having to name a function and use it elsewhere
+    Local names preceded by & is always captured by reference and without is captured by value
+
+Lambda and Lifetime 
+    A lambda might outlive its caller. This can happen if we pass a lambda to a different thread or if the callee stores away the lambda for later use
+    Capture by value isntead of reference can help in this case
+Lambda and this
+    We can include class members int het set of names potentially caputed by adding this to the capture list 
+        Used whenw e want to use a lambda in the implementation of a member function.
+
+Explicit Type Conversion 
+    Constrcution using the {} notation provides type-safe constructions of new Values
+        const_cast for getting write access to something declared const
+        static_cast for reversing a well-defined implicit conversion 
+        reinterpret_cat for changing the meaning of bit patterns
+        dynamic_cast for dynamically checked classs hierarchy navigation 
+
+Named Cast 
+    Some type conversions are not well behaved or easy to type check. 
+        Example : IO_device* d1 = reinterpret_cast<IO_device*>(0xff00);
+            Do not know if that address is valid 
+    reinterpret_cast is the kind of conversion that must be used for pointers to functions 
+
+C-Style Cast    
+    C++ inhertied the notation from C, (T)e, which performs any conversion to make a value of type T from the expression 
+        C-style cast can also cast from a pointer to a class to a pointer to a private base of that class
+
+Function-Style Cast 
+    The construction of a value of type T from a value e can be expressed by the functional notation T(e)
+        For example : int i = int(d);
+        For built-in types T(e) is not safe because T(e) is equivlanet to (T)e
+            Prefer T{v} conversions for well-behaved constructions and the named cast for other conversions 

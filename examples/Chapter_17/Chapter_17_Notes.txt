@@ -1,0 +1,140 @@
+Copnstructors, Copy and Move and Destructors directly support a view of lifetime and resource management 
+    These operations are not logically separate. Must define them as a matched set or suffer logical or performance problems. 
+
+Constructors and Destructors 
+    We define a constructor to initialize an object. 
+    We define a destructor to ensure cleanup at point of destruction (When object goes out of scope)
+
+Constructors and Invariants 
+    A member with the same name as its class is called a constructor 
+    Constructor declaration specifies an argument list exactly as for a function, but has no return type. 
+    The name of a class cannot be used for an ordinary member function, data member, member type within the class 
+    Initialization must establish a class invariant, that is something that must holdw henever a member function is called 
+        Example - Vector, the invariant is that "elem points to an array of sz doubles" and "sz is non-negative" 
+            The Constructor must make these constraints true 
+            If unable to uphold the invariant it will throw an exception. 
+                No object is created and the constructor must ensure that no resources are leaked 
+
+Destructors and Resources 
+    Constructor initalizes an object, which means it creates the environment in which the member functions operator. 
+        Creating that enviornment involves aacquiring resources - such as file, a lock or some memory that must be released after use 
+        Some classes will need a function that is guaranteed to be invoked when an object is destroyed in a manner similar to the way a constructor is guaranteed to be invoked when an object is created 
+    Destructors are called implicitly when an automatic variabelg oes out of scope, an object on the free store is deleted 
+    Only in rare circumstances does the user need to called a destructor explicitly 
+        delete keyword used to deallocate the resources allocated by the constructor 
+
+Base and Member Destructors 
+    A constructor builds a class object "from the bottom up"
+        1. First, the constructor invokes its base class constructor 
+        2. Invokes the memebr constructors 
+        3. Finally, it executes its own body 
+    A destructor does it in the opposite direction 
+        1. Destructor executes its own body 
+        2. Invokes its member destructors 
+        3. Invokes its base class destructor 
+    virtual base is constructed before any base that might use it and destroyed after all such bases
+    This ordering ensures that a base or a member is not used before it has been initialized or used after it has been destroyed 
+
+    Cases where a call to the destructor must be made explicitly 
+        Consider a vector that maintains a pool of memory into which it can grow and shrink using push_back and pop_back 
+        When we add an element, the container must invoke its consturctor for a specific address 
+            new(p) X{a} // Copy construct an X with the value a in address p 
+        When we remove 
+            p->~X() //Destory the X in address p 
+        We can prevent destruction of an X by declaring its destructor =delete or private 
+            Able to create a class for which objects can be explicitly destroyed, but not implicitly 
+
+Virtual Destructors 
+    A destructor can be declared to be virtual, and usually should be for a class with a virtual function. 
+    The reason that we need a virtual destructor for this particular case is that an object is usually manipulated through the interface provided by a base class and is often deleted through that interface 
+
+Initialization without Constructors 
+    Able to intialize objects of a class for which we have not defined a constructor using - 
+        1. Memberwise intialization 
+        2. Copy intialization 
+        3. Default Initalization 
+    If a class has a non-static data member, it needs a constructor to intialize it 
+
+Initilization Using Constructors 
+    {} to be explicit to the fact that you are initializing 
+        You are not just assigning, calling or declaring a function 
+    {} notation can be used to provide arguments to a constructor wherever an object can be constructed 
+    The = and () Notation for intialization are not universal 
+    Also, {} does not allow narrowing 
+    () can only be used if a constructor has been defined 
+
+Default Constructors 
+    A constructor that can be invoked without an argument is called a default constructor 
+    For built-in type the default constructor is not invoked for unintialized non-static variables 
+    Constructor for built-in types are most often used for template arguments 
+    References and consts must be intialized. Therefore, a class containing such members cannot be default constrcuted unless the programmer supplies in-class member intializer or defines a default constructor that intializes them. 
+    The problem with containers of elements without default values is often best solved by not allocating elements until you have a proper value for them (using push_back())
+
+Initializer-List Constructors 
+    A constructor that takes a single argument of type std::intializer_list is called an intializer-list constructor. 
+    An intializer-list constructor is used to construct objects using a {}-list as its intializer
+    Intializer list can be of arbitary length but must be homogeneous. 
+        All elements must be of the template arguemtn type T or implicitly convertible to T 
+    
+Initalizer_list Constructor Disambiguation
+    For selecting a constructor, default and initializater list take precedence 
+    default > initalizer-list 
+    Rules are : 
+        1. If either a default constructor or an init-list constructor could be invoked, prefer the default constructor 
+        2. If both an initializer-list constructor and an "ordinary constructor" could be invoked, prefer the initializer-list constructor 
+            Second rule is necessary to avoid different resolutions based on different number of elements 
+        
+Use of intializer_list 
+    A function with an intializer_list<T> argument can access it as a seqeuence using member functions begin(), end() and size() 
+        No subscripting avaiable for intializer_list
+        elements of an initializer_list are immutable. 
+
+Member Initalization 
+    Member's constructors are called before the body of the containing class's own constructor is executed 
+        The constructors are called in the order in which the members are decalred int he class rather than the other in which the members appear in the intializer list 
+        If a member constructor needs no argument, the member need not be mentioned in the member intializer list
+            If no argument given, the member's are given default values 
+        A constructor can intialize members and bases of its class, but not members or bases of its members or bases 
+
+Member Initialization and Assignment 
+    Member intializer are essential for types for which the meanning of intialization differs fromt hat of assignment 
+
+Base Initalizer 
+    Bases of a derived class are intialized in the same way non-data members are 
+        That is, if a base requires an initializer, it must be provided as a base initializer in a constructor 
+        As with members, the order of intialization is the declaration order, and it is recommended to specify base intializer in that order. 
+        Base are intialized before members and destroyed after members 
+            (Refer Page 502)
+
+Delegating Constructors 
+    If you want two constructors to do the same action, you can repeat yourself or define an init()
+        Member-style intializer using the class's own name calls another constructor as part of its construction 
+        Delegating by calling another constructor in a constructor's member and base intializer list is very different from explicitly calling a constructor int he body of a constructor 
+
+In-Class Initalizers 
+    Can specify an intializer for a non-static data member in the class declaration 
+    By default a constructor will use such an in-class intializer 
+
+static Memeber Initlization 
+    static Member declarations acts as a declaration for a defintion outside the class 
+
+Copy and Move 
+    Typically, a move cannot throw whereas a copy might because it may ened to acquire a resource 
+    When you write a move operation, you should leave the source object in a valid but but unspecified state. 
+
+Copy 
+    Copy - Copy Constructor - X(const X&)
+    Copy - Copy ASsignment - X& operator=(const X&)
+    Copy constructors and a copy assignment differ in that a copy construcotr initalizes unintalized memory, whereas the copy assignment operator must correct dealw ith an objcet that has already been constructed 
+
+Copy of Bases 
+    A base is just a member, to copy an object of a derived class you have to copy its base 
+
+Slicing 
+    A pointer to a derived class implicitly converts to a pointer to its public base clsas 
+    Can slice a derived class into its base class when copied 
+
+Move 
+    move() is a STL Function returning an rvalue refernce to its argument 
+        move(x) means give me an rvalue reference to x 
+

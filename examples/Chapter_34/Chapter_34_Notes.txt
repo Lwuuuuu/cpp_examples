@@ -1,0 +1,68 @@
+Almost Containers 
+    Built-in arrays, array and string are to be considered almost containers  
+    They hold elements, so they are containres, but each has restrictions or added facilites that make them awkard in the context of the STL 
+    Containers serve common but different needs. 
+        For example - 
+            1. pair and tuple are heterogenous; all other containers are homogenous (all elements are of the same type)
+            2. Array, VEctor an d tuple elements are contigously allocated; forward_list and map are linked structures. 
+            3. biset and vector<bool> hold bits and access them through proxy objects; all other standard library containers can hold a variety of types and access elements directly
+
+Array 
+    An array, defined in <array> is a fixed size sequence of elements of a given type where the number of elements is specified at compile time
+        therefore, an array can be allocated with its elements on the stack, in an object or in static storage 
+        The leemnts are allocated in the scqope where the array is defined 
+        An array is best understood as a built-in array with its size firmly attached 
+    No management information is stored in an array. 
+        This implies that moving an array is no more efficient than copying it 
+        The number of elements and subscript values for array are of unsigned type
+        Array can be init with an initializer list: array<int, 3> a1 = {1, 2, 3};
+        The element count must be a constant expression 
+        For example - 
+        void f(int n){
+            array<string, n> aa = ... //Error the size is not a constant expression 
+        }
+        If you need the element count to be variable use a vector. 
+            On the other hand, since array's element count is known at compile time, array's size() is a constexpr function 
+    There is no constructor for array that copies an argument value. 
+        Fill operation is provided 
+        void f() { 
+            array<int, 8> aa; 
+            aa.fill(99) //Assign eight copies of 99 to array aa 
+        }
+    Since array doesn't follow the handle to elements, swap() has to actually swap elementss, so that swapping two array<T,N> applies swap() to N pairs of This
+
+    When neccesary,a n array can be explicitly passed to a C-style function that expects a pointer 
+
+    Why would we use array when vector is much more flexible. 
+        Array is less flexible therefore it is simpler to handle than vector 
+        Occasionally, there is significant performance advantage to be had by directly accessing elements alocated oin the stack rather than allocating elements on the free store
+        Stack is a limited resource and stack overflow is nasty. 
+    Array vs built-in array  
+        An array nows its size, so it is easy to use with STL algorithms and it can be copied (using = or initialization)
+            However, the main reason to prefer array is that it saves the programmer from surprising nasty conversions to pointers 
+            For example - 
+                void h(){
+                    Circle a1[10];
+                    array<Circle, 10> a2 
+                    // ...
+                    Shape* p1 = a1; //Disaster waiting to happen because it will compile but you are converting a Circle Array to a Shape 
+                    Shape* p2 = a2; //Compile error will occur (Conversion of array<Circle, 10> to shape)
+                    p1[3].draw()
+                }
+
+bitset 
+    Aspects of a system, such as the state of an input stream, are often represented as as et of flags indicating binary condition such as good/bad true/flase and on/off 
+    C++ supports the notion of small set of flags 
+    class bit-set<N> generalizes this notion and offers greater convenience by providing operations on a sequence of N bits [0:N) where N is known at compile time
+    For sets of bits that don't fit into a long long int, using a bitset is much more convenient than using integers directly. For smaller sets, bitset is usually optimized. 
+    If you want to name the bits, rather than numbering them the alternative is to use a set an enumeration or bit-field 
+
+    bitset<N> is an array of N bits. 
+        bitset differs from a vector<bool> by being a fixed size
+        Differs from set by having its bits indexed by integers rather than associatively by value 
+        Not possible to address a single bit directly using a built-in pointer. 
+            bitset can be thought of as an N-bit binary number 
+
+Constructor - A bitset can be constructed with a specified number of zeroes, from the bits in an unsigned long long int or from a string 
+
+34.2.4 Tuples (997)

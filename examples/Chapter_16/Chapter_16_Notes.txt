@@ -1,0 +1,170 @@
+Class Basics 
+    A class is a namespace containing its members 
+    public members provide the class's interface and the private members provide implementation details 
+    A struct is a class where members are by default public 
+
+Member Functions 
+    Member names can be used without explicit reference to an object. 
+        The name refers to the member of the object for which the function was invoked 
+
+Default Copying 
+    Objects can be copied by default. 
+        Class object can be init with a copy of an object of its class 
+        Default semantics is a memberwise copy. 
+
+Access Control 
+    Declaration of date provides a set of functions for manipulating for a Date. 
+        Does not specify t hat those functions should be the only ones to depend directly on date 
+            This restriction can be expressed by using a class instead of a struct 
+    public label separates the class body into two parts.
+        privaate - parts that can only be used by class labels 
+        public - constitues the public interface to objects of the class 
+        A struct is simply a class whose members are public by default 
+        Nonmember functions are barred from using private members 
+        init function now becomes essential because it makes the data private which fores us 
+        to provide a way of init members
+    Benefits of restricting access to data structure to a declared list of functions. 
+        Errors on illegal values on the object can be localized to these functions 
+    The protection of private data relies on restriction of the use of the class member names 
+
+class and struct 
+    If you think of a class as a proper type with an invariant use class instead of struct
+    By default the members of a class are private 
+    Can have more than one public/private section, can be useful for machine-generated code 
+
+Constructors 
+    Use of functions such as init is inelegant and error-prone. 
+        There is nowhere where it is stated that an object must be initalized. 
+            A programmer can forget to do so or do it twice. 
+            Better for a programmer to declare a function witht he explicit purpose of intializing objects 
+                Constructor is recognized by having the same name as the class itself. 
+                Example - 
+                    class Date { 
+                        int d, m, y;
+                    public:
+                        Date(int dd, int mm, int yy); // constructor
+                    };
+                When a class has a constructor, all bojects of that class will be initlized by a constructor call. 
+                    If a constructor requires arguments, these arugments must be supplied 
+                        Can use the {}-initializer notation 
+                        Can have multiple constructor, which can provide a variety of ways to initalize the object of a type 
+                            Obeys the same overloading rules as ordinary functions. 
+
+Explicit Constructors 
+    By default, A constructor is invoked by a  single argument acts as an implicit conversion from tis argument type to its type 
+    keywrod explicit can only be used for inits and explicit conversions. 
+    An intializzation with an = is considered a copy initlization. 
+        In principle, a copy of the intializer is palced into the intializaed object. 
+            Can be optimized away using a move operation and that can be used if the initialized is an rvalue 
+            Leaving out the '=' makes the intialization explicit  
+            Explicit initialization is known as direct intiailization 
+        If a constructor is decalred explicit and defined outside the class, that explicit cannot be repeated
+
+In-Class Initializer 
+    When we use several constructors, member intialization can become reptitive. 
+        Can deal with that by introducing default arguments to reduce the number of constructors. 
+
+In-Class Function Definitions 
+    A member function defined within the class definition rather than simply declared there is taken 
+    to be an inline member function. 
+        That is, in-class defintion of member function is for small, rarely modified frequently used functions 
+    
+Mutability 
+    We can define a named object as a constant or as a variable. 
+        A name can refer to an object that holds immutable or a mutable value. 
+        Systematic use of immutable object leads to more comphrensible code, more error found early, improved performance. 
+        Immutability is a useful property in multi-threaded programs 
+
+Physical and Logical Constness 
+    const after the argument list in the function declaration indicates that these functions do not modify the state of the object
+    Occasionally, a member function is logically const, but it still needs to change the value of a member 
+    to the user, the function appears not to change the state of its object, but some detail that the user cannot directly observe is updated 
+        Known as logical constness 
+        Example - Date class might have a function returning a string representation. 
+            Constructing this representation could be relatively expensive operation 
+                makes sense to keep ac opy so that repeated request would simply return that copy, unless the Date's value had been changed 
+                    Caching values like this is common  for complicated data structures. 
+
+Mutability through Indirection  
+    A member mutable is most appropriate when only a small part of a representation of the small boject is allowed to change 
+        Most complicated  cases are foten better handled by palcing the changing data in a separate object and accessing it indirectly 
+        const does not apply to objects accessed through pointers or references 
+
+Self-Reference 
+    Often useful to return a reference tot he updated object so that the operations can be chained 
+        Example - d.add_day(1).add_month(1).add_year(1)
+    Each non-static member function knows for which object it was invoked and can explicitly refer to it 
+        *this refers to the object for which a member function is invoked 
+            'this' considered an rvalue, so not possible to take the address of this or to assign to this 
+    In a const memebr function of class X, the type of 'this' is const X*, which prevents modification of the object itself
+    Most uses of 'this' are implicit. Every reference to a non-static member from within a class relies on an implicit use of this to get the member of the appropiate object 
+        Explicit use of this is required for access to members of base classes from a derived class that is a template 
+
+[static] members 
+    Able to get the convenience of a global variable for a class without the encumbrance of a pbulicly accessible global variable 
+        A variablet hat is part of a class, yet is not part of an object of that class, is called a static member 
+    Exactly one copy of a static member instead of one copy per object, in comparison of a non-static member that has a different copy of each member variable for each object created 
+    Similarly, a function that needs access to members of a class, yet doesn't need to be invoked for a particular object, but doesnt need to be invoked for a particular objcet is called a static member function 
+        Using a static member function you can change a static member as needed 
+        Static Member can be referred to like any other member.
+            A static member can be referred to without mentioning an object. Instead, it's name is qualified by the name of its class. 
+                Example - 
+                    void f() { 
+                        Date::set_default(4,5,1945) //Refers to the Date class set_default 
+                    }
+    If used, a static member - a function or data member must be defined somewhere 
+    Date{} serves as a notation for the value of Date::default_date 
+        Because of this we don't need a separate function for reading the default date. 
+            When the target type is unambiougsly a Date, a plain {} is sufficient. 
+    For multi-threaded programs, static data members require some kind of locking of access discipline to avoid race conditions
+
+Member Types 
+    Types and type aliases can be members of a class 
+    Member class ofte4n called a nested class can refer to types and static member sof its enclosing class 
+        Can also refer to non-static members when it is given an object of the enclosing class to refer to 
+        Also has access to members of its enclosing class, even to private memebrs, but has no notion of a current object of the enclosing class 
+
+    A class does not have any special access rights to the members of its nested class 
+        Member classes are more a notional convenience than a feature of fundamental importance 
+            Member aliases are important as the basis of generic progrmaming techniques relying on associated types 
+
+Concrete Class 
+    Mechanism must be provided for the user to define small concrete types. 
+        These types are called conrete types or concrete classes to distinguish them from abstract classes and classes in class hierarchies 
+    A class is called co nrete if its representation is part of its definition 
+        This distinguishes it from abstract classes which provide an interface to a variety of implementations
+            Having the representation available allows us: 
+                1. Place objects on the stack, in statically allocated memory 
+                2. Copy/Move Objects
+                3. Refer directly to named objects as opposed to references and pointers 
+            This makes concrete classes simple to reason about and easy for the compiler to generate optimal code for 
+                Prefer contrete classes for small frequently used and performance critical types such as complex numbers, smart pointers and containers 
+    Set of Operations that are fairly typical for a user-defined type 
+        1. A constructor specifying how objects/variables of the type are to be intialized 
+        2. A set of functions allowing a user to examine a Date. These functions are marked const to indicate that they don't actually modify the state of the object for which they are called
+        3. A set of functions allowing the user to modify Dates without actually having to know the details of the representation or fiddle witht intricacies of the semantics 
+        4. Implicitly defiend operations that allow Dates to be freely copied 
+        5. A class, Bad_date to be used for reporting errors as exceptions 
+        6. A set of useful helper functions. Not members and have no direct access to the representation of a date, but they are identified as related by the use of the namespace Chrono 
+
+Member Functions 
+    Constructor establishes the invariant for the class (That is, it denotes a valid object)
+
+Helper Functions 
+    Typically, a class has a number of functions associated with it that need not be defined in the class itself because they don't need direct access to the representation 
+    Defining helper functions in the class itself would complicate the class interface a nd increase the # of functions that would potentially need to be examined when a change to the representation was considered 
+    How are such functions "associated" with class Date. 
+        Early days, the declarations were simply placed in the same file as the declaration of class Date. 
+        Can make the assocation explicit by enclosing the class and its helper functions in a namespace
+
+Overloaded Operators 
+    Useful to add functions to enable conventional notation 
+
+Significance of Conrete Classes 
+    Call simple user-defined types, such as Date, co nrete types to distinguish them from abstract classes and class hierarchies 
+        Also emphasize their similarity to built-in types such as int and char 
+    Conrete classses are used just like built-in types. 
+    Their model of use and the philosophy behind their design are quite different from what is called OOP 
+    Intent of conrete type is to do a single, relatively simple thing well and efficiently. 
+    Usually not the aim to provide the user with facilties to modify the behavior of a conrete type. 
+    No indrection through pointers is necessary for access to objects of conrete classes and no housekeeping for data sotored in objects of conrete classes. 

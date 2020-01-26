@@ -1,0 +1,47 @@
+member function can be specified as:
+    virtual, indicating that ican be overridden in a derived class
+    override, indicating that it must be overriding a virtual function from a base class
+    final, indicating that it cannot be overriden in a derived class
+    static, indicating that it is not associated with a particular object 
+    const, indicating that it may not modify its object
+    volatile, indicating that it may be applied to a volatile object 
+
+    To preserve C compatbility, a const is ignored at the highest level of an argument type
+
+string to_string(int a); //prefix return type
+auto to_string(int a) -> string; //suffix return type
+same thing ^
+    Usage for suffix return type comes in function template declarations in which the return type depends on the arguments 
+
+inline 
+    inline specifier is a hint to the compiler that it should attempt to generate code for a call of a function inline rather than laying down the code for th e function once and 
+    call throught he usual function call mechanism
+
+constexpr functions consist of a single return statement, no loops and no local variables
+    a constexpr function cannot have side effects, so writing to nolocal objects is not possible. 
+        However, constexpr can refer to them if necessary 
+    constexpr can also return a reference or a pointer
+
+
+[[noreturn]]
+    [[...]] is called an attribute and can be placed just about where in C++ syntax 
+        Attribute specifies some implementation dependent property about the syntactic entity that precedes it 
+        Can be placed in front of a declaration 
+        2 Standard Attributes
+            [[noreturn]] and [[carries_dependendency]]
+        Placing [[noreturn]] at the start of a function declaration indicates that the function is not expected to return 
+
+Local variables 
+    Each thread will have its own copy for a local variable unless declared static 
+        if declared static then a single satically allocated object will be declared and will be used to represent that variable in all calls of the function 
+        It will be initialized only the first time a thread of execution reaches its definition 
+        A static variable allows the function to preserve information between calls without introducing a global variable that might be accessed and corrupted by other functions 
+        Defining a static variable recursively is undefined 
+            Useful for avoiding order dependencies among nonlocal variables 
+
+Argument Passing 
+    Unless a formal argument is a reference, a copy of the actual argument is passed to the function 
+
+Reference Arguments 
+    Use const reference to indicate that the reference is used for efficiency reasons only and not to enable the called function to change the value of the object
+    When passing a value by non-const the passed arguments will not be converted, whereas setting the argument as a const allows conversion 

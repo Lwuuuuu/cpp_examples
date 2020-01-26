@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector> 
 using namespace std;
 struct Vector {
     public:
@@ -25,5 +26,8 @@ void f(Vector& v) {
 
 int main() {
     Vector v(3);
-    f(v);
+    int b = 10;
+    const int c = b; 
+    cout << c;
+
 }

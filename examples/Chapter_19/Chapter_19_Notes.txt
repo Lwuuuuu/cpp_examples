@@ -1,0 +1,77 @@
+564 
+
+Overloading is not just arithmetic and logical operations. 
+    Crucial in the design for  containers (vectors and maps)
+
+Special Operators 
+    [] () -> ++ -- new delete 
+
+Subscripting  
+    An operator[] function can be used to give subscripts a meaning for class objects 
+    The secondf argument of an operator[] function may be  of any typ. 
+    This makes it possible to define vectors, associative arrays, etc. 
+
+Function Calls 
+    Function calls, that is, the notation expression(express-list), can b e interpreted as binary operation with the expression as the left-hand operand and the xpression-list as the right-hand operand 
+    The call operator(), can be overloaded in the same way as other operators can 
+    Overloading the function ca ll operator is useful primarily for defining types that have only a single operation and for types for which one operation is predominant
+
+Deferencing operator, -> can be defined as a unary post-fix operator 
+    Example - 
+        class Ptr { 
+            //....
+            X*  o perator->();
+        }
+    Then objects of class Ptr can be used to access members of class X in a very similar to the way pointers are used 
+    The transofmration of the object p into the pointer p.operator->() does not depend on the member m pointed to 
+    Overloading -> is primarily useful for creating "smart pointers", that is, objects that act like pointers and in addition perform some action whenever an object ias accessed through them. 
+    Operator -> must be a non-static member function. If used, its r eturn type must be a pointer or an object of a class to which you can apply -> 
+
+Increment and Decrement 
+    The increment and decrement oepratorsa re unique among C++ operators in that they can be usedd as both prefix and postfix operators. 
+        Consequently, we must define prefix and postfix increment and decrement for Ptr<T>
+        For  defining the prefix and postfix the int argument is used to indicate that the function is to be invoked for postix application of ++ 
+            The int is never used; the argument is simply a dummmy used to d istinguish between pre and post 
+                Example - Ptr&operator++(int)
+    The pre-incrememnt operator can return a reference to its object. 
+    The post-increment operator must make a new object to return 
+        Makes pre-increment much easier to implement and more efficient 
+
+Allocation and Deallocation 
+    Operator new acquires it s memory by calling an operator new() 
+    Simiarly, delete free its memory by calling operator delete() 
+    A user can redefine the global operator new() and delete() or define them for a particular class 
+
+User-defined Literals  
+    These are supported through the notion of literal operator that map literals with a given suffix into a desired type. The name of a ilteral i s "operator" followed by the suffix 
+    The basic idea is that after parsing what could be a literal, the compiler always checks for a suffix 
+    The user-defined literal mechanism can be used to de fine what is to be done with the literal before it. 
+        It is not possible t o  redefine the meaning of a built-in literal suffix or to augment the syntax of literals 
+    4 kinds of literals that can be suffixed to make a user-defined literal 
+        1. Integer literal
+        2. Floating-point literal  
+        3. A string literal 
+        4. A character literal 
+    A template literal operator is a literal operator that takes its argument as a tempalte paramtere pack, rather than as a function argument 
+
+Ancillary Functions 
+    Ancillary  Functions can be used as building blocks to help wi th the somewhat tricky representation a nd tominimize code replication 
+    make them private members of the class  if they don't represent operations that are generally useful and safe to use 
+
+Friends 
+    An ordinary member function declaration specifies three logically distinct things: 
+        1. The function can access the private part of the c lass declaration 
+        2. The function is in the scope of the class 
+        3. The function must be invoked on an o bject (has a this pointer)
+    By declaring a mewmber function static we can give it the f irst two properties o nly.
+    By declaring  a nonmember fu nction a friend, we can give it the first property only
+        A  function declared friend is granted access to th e implementation of a class just like a member function but is otherwise indepedent of that class 
+        For example, could define an operator that multiples a Matrix by a  Vector 
+            These two objeect hide their resepctive representation an d provide a complete set of operations for manipulating objects of th eir types  
+            In this case, our multiplcation routine cannot be a member of both. 
+            friend Vector operator*(const Matrix&, const Vector&);
+                Can now reach intot he implementation of both  Vector and Matrix 
+            Friend declaration can be placed in either the private or public part of a class declaration; it does not matter where 
+            A member function of one class can be the friend of another. 
+            friend class "class_name" to make all member functions of one class friends of another 
+

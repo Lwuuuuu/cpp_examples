@@ -1,0 +1,81 @@
+Focuses on errors that cannot be handled locally (within a single small function) so that they require separation of error-handling activties into different parts of a program 
+    Authors of a library can detect a run-time error but does not in general have any idea what to about it 
+
+Exceptions 
+    Notion of an exception is provided to help get information from the point where an error is detected to a point where it can be handled 
+    use throw to return the exception, use catch to identify the exception 
+    Cannot jsut print error message and terminate, may cause memory leaks and leaving the program in a bad state 
+    Exception-handling mechanism:
+        Alternative to traditional techniques when they are insufficient, inelegant or error-prone 
+        Is complete; it can be used to handle all errors detected by ordinary code
+        Allows the programmer to explicitly separate error-handling code from ordinary code 
+
+    Simplest way of defining an exception is to define a class specifically for a kind of error and throw that 
+        STL defines a small hierarchy of exception classes 
+            Carries information about the error it represents; location, type of error, etc 
+
+When you can't use exceptions 
+    Time-critical component of an embedded system where an operation must be guaranteed to complete in a specific maximum amount of time 
+    Large old programs where the resource mangament is an ad hoc mess (Naked Pointers) instead of using containers like vectors & Strings 
+    Some techniques to counter these problems :
+        Give every class with a constrcutor an invlaid() operation that returns some error_code 
+            set error_code = 0 if success, otherwise return nonzero 
+
+Hierarchal Error Handling 
+    Purpose of the exception-handling mechanism is to provide a means for one part of a program to inform another part that a requested task could not be performed 
+    Exception-handling mechanisms are inherently nonolocal, so adhereance to an overall strategy is essential 
+    Error handling should be as far as possible hieerarchical. If a function detects a run-time error, ti should not ask its caller for help with recovery 
+
+Exception Guarantees 
+    We need to know what can be assumed about the state of the program before and after the attempted recovery action 
+    Ccall operation exception-safe if that operation leaves the program in a valid state when the operation is termianted by throwing an exception 
+    Before throwing a function must place all constructed objects in valid states 
+        May have to alter the state of objects to the specifications of the caller before throwing
+
+Assertions
+    Need to choose between compile-time assrets and run-time asserts 
+    Run-time asserts have choice of throw, terminate or ignore 
+    Assert::dynamic for evaluate at run-time while static_assert is evaluate at compile time 
+
+Declaring a f unction noexcept can be most valuiauble for a programmer reasoning about a program and for a compiler optimizing a program 
+    Possible for a f u nction to be conditionally noexcept:
+            template<typename T>
+            void my_fct(T& x) noexcept(Is_pod<T>());
+        noexcept.. means that my_fct may not throw if the predicate Is_Pod<T>() is True 
+
+    Another Example :
+        void call_f(vector<T>& v) noexcept(noexcept(f(v[0])))
+        {
+            for(auto x : v)
+                f(x);
+        }
+        A noexcept(expr) looks ate very operation in expr and if they all have noexcept specificatons that evaluate to true, it reutrns true 
+
+        void f(int) throw(Bad, Worse);
+        void g(int) throw()
+        throw() same as no except
+        if an exception is thrown that is not Bad or Worse then the program terminates with the unexpected handler error 
+
+Adding a const to the exception makes it so that we are unable to modify the exception caught 
+
+Rethrow 
+    Common for a handler to decide that it can't completely handle the error 
+    Handler typically does what can be done locally and then throws the exception again 
+    std::exception& err handles every STL exception 
+    catch(...) catches all exceptions
+
+Multiple Handlers - 
+    A try-block may have multiple catch-clauses (handlers)
+
+We can catch exceptions thrown by member constructors and destructors 
+    We cannot repair the object and return normally as if the exception had not happened: an exception from a member constructor means that the member may not be in a valid state
+    Other objects would have been deconstructed or not be constructed at all in the first place 
+
+Termination 
+    There are cases where exception handling must be abondoned for less subtle error-handling techniques. The guiding principles are:
+        Don't throw an exception while handling an exception
+        Don't throw an exception that can't be caught 
+        By default terminate() will call abort(). If this is not acceptable, the user can provide a terminate handler function by a call to std::set_terminate() 
+
+    A termination handler cannot return to its caller. 
+We can transfer an exception thrown on one thread to a handler on another thread using current_exception()

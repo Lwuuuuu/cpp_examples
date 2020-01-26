@@ -1,0 +1,90 @@
+Operator Functions 
+    complex c = a + b //shorthand 
+    complex d = a.operator+(b) //explicit call 
+
+Binary and Unary Operators 
+    A binary operator can be defined by either a non-static memebr function taking one argument or a nonmember function taking two arguments 
+    A unary operator, whether prefix or postfix can be defined by either a non-static member function taking no arguments or a nonmember function taking one argument 
+
+Predefined Meanings for Operators 
+    Can delete the predefined meaning of an operator when applied to a class object 
+
+Operators and User-Defined Types 
+    An operator function must be a member or take at least one argument of a user-defined type 
+        Ensures that C++ is extensible but not mutable 
+    An operator function intended to accept a built-in type as its first operand cannot be a member function 
+        aa+2 will work, but 2+aa will not where aa is a complex type 
+
+Passing Objects 
+    There is a limited choice of how to pass arguments to the operator function and how it returns its value 
+        Cannot require pointer arguments and expeted programmers to use the address of operator ore turn a pointer and expect the user to deference it 
+            *a = &b+&c not acceptable 
+        For arguments we only have two choices, pass by value or pass by reference 
+    Typically, an operator returns a result. Returning a pointer or a ference to a newly created object is usually a very bad idea. 
+        Using a pointer type gives notational problems and referring to an object on the free store results in memory mengement problems 
+            Instead, return objects by values 
+        For large objects defining a move operation to make such transfers of values is efficient 
+    A operator that returns of their argument objects can return a reference to that argument 
+        Common for operator functions that are implemented as members 
+
+Operators in Namespaces 
+    An operator is either a member of a class or defined in some namespace (possibly the global namespace)
+
+Consider a binary operator @. If x is of type X and y is of type Y , x@y is resolved like so: 
+    1. If X is ac lass, look for operator@ as a member of X or as a member of a base of X 
+    2. Look for declarations of operator@ in the context surroudning x@Y
+    3. If X is defined in namespace N, look for declarations of operator@ in N 
+    4. If Y is defined in namespace M, look for declarations of operator@ in M. 
+    In operator lookup no preference is given to members over nonmember functions 
+
+Members and Nonmember operators 
+    Prefer to minimize the number of functions that directly manipulate the representation of an object.
+        Can be achieved by defining only operators that inherently modify the vlaues of their first argument 
+            such as += 
+        Operators that simply produce a new value based on the value of the arguments, such as + are then defined outside the class and use the essential operators in their implementation 
+
+Mixed-Mode Arithmetic 
+    To copy with things such as 2+z, where z = is complex need to define operator + to accept operands of different types 
+        Need a mixed-mode aritmetic 
+    Can define the +=  inside the class, while defining the + variants outside 
+
+
+Conversions 
+    To cope with assignments and initalizations of co mplex variables with scalras, need a conversion of scalars to a compelx 
+    Example - complex(double r =0, double i =0) to shortern the number of constructors you have to write 
+
+Conversions of Operands 
+    Having multiple versions of the same operator for a class is tedious and erorr-prone 
+    The alternative to providing different versions of a function for each combination of arguments is to rely on conversions 
+    You can approximate the notion that an operator requires an lvalue as its left-hand operand by maakign that operator a member
+
+Literals 
+    Literlas of built in types (1.2 and 12e3 are literals of type double)
+    Can come close to that by declaring constructors constexpr 
+        Given this, a complex can be constructed from its constituent parts at compile time just like a literal from a built-in type 
+
+Accessor Functions 
+    Not particularly a good idea to provide individual access to all members of a class. 
+        For many types, individual acces is an invnitation to disaster 
+            Individual access could compromise an invariant and it typically complicates changes tot he representation 
+                Individual access can be helpful for some functions tho like using real() and imag() for == 
+Type Conversions 
+    Can be accomplished by 
+        1. A constructor taking a single argument 
+        2. A conversion operator 
+    In either case the conversion can be. 
+        1. Explicit : That is, the co nversion is only performed in a direct intialization 
+        2. Implicit; that is, ti will be applied wherever it can be used unambiogusly (e.g as a functiona argument)
+
+Conversion Operators 
+    Using a constructor taking a single argument to specify type conversion is convenient but has implications that can be undesirable 
+    A constructor cannot specify 
+        1. An implicit conversion from a user-defined type to a built-in type 
+        2. A conversion from a new class to a previously defined class 
+    These problems can be handled by defining a conversion operator for the source type. 
+    A member function X::operator T(), where T is a type name defines a conversion from X to T 
+    Whenever a tiny object appears where an int is needed, the appropriate int is used 
+
+Ambiguities 
+    An assignment of a value of type V to an object of class X islegal if there is an assignment operator X::operator=(Z) so that V is Z or there is a unique conversion of V to Z 
+    

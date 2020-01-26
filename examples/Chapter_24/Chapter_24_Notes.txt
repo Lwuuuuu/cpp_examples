@@ -1,0 +1,54 @@
+Templates Offer: 
+    The ability to pass types as arguments without loss of information. 
+        1. This implies excellent opportunities for inline, of which current implementations take great advantage 
+        2. Delayed type checking (Done at instantiation). 
+            Implies opportunities to weave together information from different contexts 
+        3. The ability to pass constant values as arguments. 
+            Implies the ability to do compile-time computation 
+    Templates provide a powerful mechanism for compile-time computation and type manipulation that can lead to compact and efficient code 
+
+    Firsty and common use of templates is to support generic programming, that is, programming focused on the design implementation and the use of general algorithms 
+        Focused on the design implementation and use of general algorithms 
+            Accept a wide variety of types as long as they meet the algorithms requirements on its arguments 
+    The focus on generative techniques and relying on tyep functions to express compile-time computation are called template metaprogramming 
+    The type checking provided for tempaltes checks the use of arguments in the template defintion rather than against an explicit interface.
+    What is done at compile time using templates does not involve objects, only values  
+        In particular, there are no variables a t compile time 
+    Key aspect of generic programming, metaprogramming and proabably a ll uses of template is the uniform handling of buiult-in types and user-defined types 
+    For example - an accumulate() operation does not care whether the type of values it adds up are ints, complex or Matrixes 
+        What it care about is that they can be added us ing a + operator. 
+            The use of a type as a  tempalte argument does not imply or require the use of a class hierarchy or any form of run-time self-idenfication of the typpe of an object 
+
+algorithms and lifting 
+    The most effective way of getting a good algorithm is to generalize from one and preferably more - concrete e xample. 
+        Such generalization is called lifting: that is, lifting a general algorithm from specific functions 
+Steps 
+    Try to abstract away the data types so that we don't have to be specific about them 
+    e.g double vs int and array vs linked list 
+    We need 3 operations to access the container data structure: 
+        1.  Not at e nd 
+        2. Current  Value 
+        3. Next Value 
+    For the Actual Data 
+        1. Initialize to Zero 
+        2. Add 
+        3. Return the result 
+
+Concepts 
+    What does tempalte code assume about its argument types?
+    Need to identify small number of concepts (set of requirements) that can be used for many tempaltes and many types as arguments 
+    Discovering Concepts  
+        An example - 
+        template<typename C>
+        class String {
+            //
+        };
+        What is required of a type  X for it to be used as an argument to String: String<X> 
+            1. Look at the implementation and determine which properties it uses from its parameter types 
+            2. Look at plausible alternative template implementations and list their  requirements on their template arguments 
+            3. Look a t the resulting list or lists of required properties and compare it to list of requirements that we have used for other templates 
+                Try to find simple,  common concepts that can express what would otherwise be many long l ist of requirements 
+                Aim is to make our design benefit from general work on classifcation 
+                Resulting concepts are e asier to give meaningful names and easier to remebe.. 
+                Should maximize the degree  of interopeerability of templates and types by limiting variations in concepts to what is essential 
+705/720

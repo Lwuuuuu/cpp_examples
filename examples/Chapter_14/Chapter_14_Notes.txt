@@ -1,0 +1,93 @@
+The notion of a namespace is provided to directly represent the notion of a set of facilties that 
+directly belong together, for example, the code of a library. 
+    Members of a namespace are in the same scope and can refer to each other without special notation.
+
+Explicit Qualification 
+    A member can be declared within a namespace definition and 
+    defined later using the namespace-name :: member-name 
+
+    Cannot declare a new member of a namespace outside a namespace 
+    defintion using the qualifier syntax 
+
+Global scope is a namespace and to refer to it within a namespace
+use the :: followed by function name 
+
+using std::string //use "string" to mean "std::string"
+When used for an overloaded name, a using-declaration applies to all overloaded versions 
+
+Within a functiona using-directive can be safeuly used as a notional convenience, 
+but care should be taken with global using-directives because overuse can lead to exactly the name clashes
+that namesapces were introced to avoid. 
+
+classes are within a namespace 
+Must be careful with using-directives in the global scope.
+    In particular, don't place a using-directive int he global scope in a header file except in a very sepcialized cicumstances
+
+Argument-Dependent Lookup 
+    A function taking an argument of user-defined ty pe X is more
+    often than not defined in the same namesapce as X. 
+    If a function isn't found int he context of its use, we look in the namespace of its argument 
+
+In the standard, the rules for argument-dependent lookup are phrased in terms of associated name-spaces 
+    If an argument is a class member, the associated namesapces are the class itself (including the base classes) and the class's enclosing namespaces 
+    If an argument is a member of a namesapce, the associated namespaces are the enclosing namespaces 
+    If an argument is a built-in type, there is no associated namespace
+
+ADL can give suprising results. May call a different function with the same name if type is not specified
+
+Namespaces are Open
+    You can add names to it from several separate namespace declarations
+
+ Namespaces as Modules 
+    A namespace is a mechanism for expressing logical grouping. 
+        If some declaration logically belong together according to some criteria, they can be put in 
+        a common namespace to express that fact. 
+        Can use namespaces to express the logical structure of our program 
+
+Composition Using Namespaces
+    A using-declaration adds a name to a local scope 
+    A using-directive does not; it simply renders names accessible int he scope inw hich they were declared
+    A locally declared name hides nonlocal declarations of the same name, and any illegal overloading of the name is 
+    detected at the point of declaration 
+
+Namespace Aliases 
+    Long namespace can be resolved by providing a short alias for a longer namespace name 
+    Namespace aliases also allow a suer to refer to the library and have a singel declaration definign what lthat library really is 
+        Simplfy the task of replacing one version of a library with another 
+        Overuse of aliasses can lead to confusion 
+
+Namespace Composition 
+    We can compose an interface out of existing interfaces 
+    If an explcitly qualified name isn't declared in the namesapce mentioned, 
+    the compiler looks in namespaces mentioned in using-directives 
+    Only if we need to define something do we need to know the real namespace of an entity 
+
+Ideally, a namespace should 
+    1. Express a logically coherent set of features 
+    2. Not give users access to unrelated features 
+    3. Not impose a significant notional burden on users 
+
+Composition and Selection 
+    Combining Composition (using-directives) and selection (using-declarations) yields the flexibility needed for most real-world examples
+        Can provide access to a variety of facilties in such a way that we resolve name clashses and ambiguities arising from their composition 
+    Names explciitly declared in a namesapce take prioerity over names made accessible in another scope by a using-directive 
+    If declared in parent namespace, compiler will favor the function in the namespace over the ones in the using-directive if those namespaces have functions of the same name 
+
+Namespaces and Overloading 
+    Function overloading works across namespaces. 
+        Essetnial to allow us to migrate existing libraries to use namespaces with minimal source code changes 
+
+Versioning 
+    inline namespace - guarantees that a user sees exactly one particular version 
+        inline specifies that a namespace is the default namespace for a namespace
+
+Unnamed namespaces 
+    Sometimes useful to wrap a set of declarations in namespace simply to protect against the possiblity of name clashses 
+        Preseves locality of code rather than to present an interface to users 
+
+    Do not need to have a name, can just have namespace { ... 
+                                                        }
+    Accessing the members of a unnamed namespace has an implied using-directive 
+
+
+
